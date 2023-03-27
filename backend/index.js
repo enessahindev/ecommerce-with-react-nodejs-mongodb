@@ -13,7 +13,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //mongoDBConnection
 const uri =
-  "mongodb+srv://mongoDB:15040606@ecommercedb.mpyda6n.mongodb.net/?retryWrites=true&w=majority";
+  "YOUR_DATABASE_URL";
 //Use of mongoose
 mongoose
   .connect(uri, {

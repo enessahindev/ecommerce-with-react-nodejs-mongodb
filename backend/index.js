@@ -118,34 +118,67 @@ app.post("/products/remove", async (req, res) => {
 
 const basketSchema = new mongoose.Schema({
   _id: String,
-  products: String,
+  productId: String,
   userId: String,
 });
 
 const Basket = mongoose.model("Basket", basketSchema);
 
-// Add Basket Start //
-app.post("/basket/add", async (req, res) => {
+app.post("/baskets/add", async (req, res) => {
   try {
     const { productId, userId } = req.body;
     let basket = new Basket({
       _id: uuidv4(),
-      userId: userId,
       productId: productId,
-
+      userId: userId,
     });
     await basket.save();
-
     let product = await Product.findById(productId);
-    product.stock = product.stock -1;
+    product.stock = product.stock - 1;
     await Product.findByIdAndUpdate(productId, product);
 
-    res.json({ message: "The product, is basket added successfully!" });
+    res.json({ message: "Product added to cart. 🥳" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
-// Add Basket End  //
+
+app.post("/baskets/getAll", async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const baskets = await Basket.aggregate([
+      {
+        $match: { userId: userId },
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "productId",
+          foreignField: "_id",
+          as: "products",
+        },
+      },
+    ]);
+
+    res.json(baskets);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post("/baskets/remove", async (req, res) => {
+  try {
+    const { _id } = req.body;
+    const basket = await Basket.findById(_id);
+    const product = await Product.findById(basket.productId);
+    product.stock += 1;
+    await Product.findByIdAndUpdate(product._id, product);
+    await Basket.findByIdAndRemove(_id);
+    res.json({ message: "Basket removed successfully!" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 //                      Basket Collection End                     //
 //----------------------------------------------------------------//
@@ -153,13 +186,56 @@ app.post("/basket/add", async (req, res) => {
 
 const orderSchema = new mongoose.Schema({
   _id: String,
-  products: String,
+  productId: String,
   userId: String,
-  count: Number,
-  price: Number,
 });
 
 const Order = mongoose.model("Order", orderSchema);
+
+// Add Order Start //
+app.post("/orders/add", async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const baskets = await Basket.find({ userId: userId });
+    for (const basket of baskets) {
+      let order = new Order({
+        _id: uuidv4(),
+        productId: basket._id,
+        userId: userId,
+      });
+      order.save();
+      await Basket.findByIdAndRemove(basket._id);
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+// Add Order End //
+// Order List Start //
+app.post("/orders", async(req, res)=>{
+  try {
+      const {userId} = req.body;
+      const orders = await Order.aggregate([
+          {
+              $match: {userId: userId}
+          },
+          {
+              $lookup:{
+                  from: "products",
+                  localField: "productId",
+                  foreignField: "_id",
+                  as: "products"
+              }
+          }
+      ]);
+
+      res.json(orders);
+  } catch (error) {
+      res.status(500).json({message: error.message});
+  }
+})
+// Order List End //
+
 //                      Order Collection End                      //
 //----------------------------------------------------------------//
 //                           Tokens Start                         //

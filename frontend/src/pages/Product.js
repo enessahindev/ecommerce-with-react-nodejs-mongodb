@@ -62,7 +62,7 @@ function ProductComponents() {
       <div className="container mt-2">
         <div className="card">
           <div className="card-header">
-            <h1>Product Lists</h1>
+            <h3>Product Lists</h3>
           </div>
           <div className="card-body">
             <div className="form-group">

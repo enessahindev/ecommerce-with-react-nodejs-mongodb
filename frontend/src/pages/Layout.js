@@ -14,7 +14,7 @@ function LayoutComponents() {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg bg-light">
+      <nav className="navbar navbar-expand-md navbar-dark bg-dark">
         <div className="container-fluid">
           <Link className="navbar-brand">
             {/* <img
@@ -39,16 +39,24 @@ function LayoutComponents() {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item mx-2">
-                <Link to="/">Home</Link>
+                <Link to="/" className="text-decoration-none">
+                  Home
+                </Link>
               </li>
               <li className="nav-item mx-2">
-                <Link to="/products">Ürünler</Link>
+                <Link to="/products" className="text-decoration-none">
+                  Products
+                </Link>
               </li>
               <li className="nav-item mx-2">
-                <Link to="/orders">Siparişlerim</Link>
+                <Link to="/orders" className="text-decoration-none">
+                  Orders
+                </Link>
               </li>
               <li className="nav-item mx-2">
-                <Link to="/baskets">Sepetim</Link>
+                <Link to="/baskets" className="text-decoration-none">
+                  Basket
+                </Link>
               </li>
             </ul>
             <button onClick={logOut} className="btn btn-danger" type="submit">

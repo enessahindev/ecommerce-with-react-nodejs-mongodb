@@ -47,7 +47,7 @@ function ProductComponents() {
   const remove = async (_id) => {
     let confirm = window.confirm("Would you like to delete the product?");
     if (confirm) {
-      let model = { _id: _id };
+      let model = { _id: _id, stock: stock };
       let response = await axios.post(
         "http://localhost:5000/products/remove",
         model
@@ -56,6 +56,19 @@ function ProductComponents() {
       getAll();
     }
   };
+
+  const update = async (_id) => {
+    let up = window.confirm("Would you like update items?"); 
+    if (up) {
+      let model = { _id: _id };
+      let response = await axios.post(
+        "http://localhost:5000/products/update",
+        model
+      );
+      alert(response.data.message);
+      getAll();
+    }
+  }
 
   return (
     <>
@@ -105,7 +118,13 @@ function ProductComponents() {
                           onClick={() => remove(product._id)}
                           className="btn btn-danger btn-sm"
                         >
-                          Sil
+                          Delete
+                        </button>
+                        <button
+                          onClick={() => update(product._id)}
+                          className="btn btn-warning btn-sm mx-2"
+                        >
+                          Update
                         </button>
                       </td>
                     </tr>

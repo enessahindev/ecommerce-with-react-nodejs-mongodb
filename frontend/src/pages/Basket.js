@@ -42,6 +42,19 @@ function BasketComponents() {
     getAll();
   };
 
+  const handleSubmit = () => {
+    toast.info("Payment successful. 🥳", {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+  };
+
   const calc = () => {
     let total = 0;
     baskets.forEach((element) => {
@@ -110,7 +123,7 @@ function BasketComponents() {
               <div className="col-md-8">
                 <div className="card mb-4">
                   <div className="card-header py-3">
-                    <h3 className="card-title mb-0">Summary</h3>
+                    <h4 className="card-title mb-0">Summary</h4>
                     <hr />
                     <div className="card-body">
                       <ul className="list-group list-group-flush">
@@ -118,10 +131,11 @@ function BasketComponents() {
                           Total piece: {baskets.length}
                         </li>
                         <li className="list-group-item list-group-item-primary mb-2">
-                          Total amount:{" "}
+                          Total amount:
                           <p className="col-2 text-center"> {calc()} $ </p>
                         </li>
                       </ul>
+                      <div onClick={handleSubmit}>
                       <button
                         className="btn btn-success btn-block w-100"
                         style={{ float: "right" }}
@@ -130,6 +144,7 @@ function BasketComponents() {
                       >
                         Payment
                       </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -137,7 +152,7 @@ function BasketComponents() {
             </div>
           </div>
         </div>
-        <ToastContainer/>
+        <ToastContainer />
       </div>
     </>
   );

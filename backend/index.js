@@ -95,7 +95,7 @@ app.post("/products/add", upload.single("image"), async (req, res) => {
     });
 
     await product.save();
-    res.json({ message: "Product added successfully!" });
+    res.json({ message: "Product added successfully! 🥳" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -107,12 +107,25 @@ app.post("/products/remove", async (req, res) => {
   try {
     const { _id } = req.body;
     await Product.findByIdAndRemove(_id);
-    res.json({ message: "Product removed successfully!" });
+    res.json({ message: "Product removed successfully! 🥳" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 //                          Remove Product End                   //
+//----------------------------------------------------------------//
+//                          Update Product Start                   //
+app.post("/products/update", async (req, res) => {
+  try {
+    const { _id } = req.body;
+    let product = await Product.findByIdAndUpdate(_id);
+    product.stock = product.stock + 1;
+    res.json({ message: "Product updated successfully! 🥳" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+//                          Update Product End                   //
 //----------------------------------------------------------------//
 //                      Basket Collection Start                   //
 
@@ -123,6 +136,9 @@ const basketSchema = new mongoose.Schema({
 });
 
 const Basket = mongoose.model("Basket", basketSchema);
+//                      Basket Collection End                     //
+//----------------------------------------------------------------//
+//                      Basket Add Start                         //
 
 app.post("/baskets/add", async (req, res) => {
   try {
@@ -133,6 +149,7 @@ app.post("/baskets/add", async (req, res) => {
       userId: userId,
     });
     await basket.save();
+
     let product = await Product.findById(productId);
     product.stock = product.stock - 1;
     await Product.findByIdAndUpdate(productId, product);
@@ -174,7 +191,7 @@ app.post("/baskets/remove", async (req, res) => {
     product.stock += 1;
     await Product.findByIdAndUpdate(product._id, product);
     await Basket.findByIdAndRemove(_id);
-    res.json({ message: "Basket removed successfully!" });
+    res.json({ message: "Basket removed successfully! 🥳" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -200,7 +217,7 @@ app.post("/orders/add", async (req, res) => {
     for (const basket of baskets) {
       let order = new Order({
         _id: uuidv4(),
-        productId: basket._id,
+        productId: basket.productId,
         userId: userId,
       });
       order.save();
@@ -212,28 +229,28 @@ app.post("/orders/add", async (req, res) => {
 });
 // Add Order End //
 // Order List Start //
-app.post("/orders", async(req, res)=>{
+app.post("/orders", async (req, res) => {
   try {
-      const {userId} = req.body;
-      const orders = await Order.aggregate([
-          {
-              $match: {userId: userId}
-          },
-          {
-              $lookup:{
-                  from: "products",
-                  localField: "productId",
-                  foreignField: "_id",
-                  as: "products"
-              }
-          }
-      ]);
+    const { userId } = req.body;
+    const orders = await Order.aggregate([
+      {
+        $match: { userId: userId },
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "productId",
+          foreignField: "_id",
+          as: "products",
+        },
+      },
+    ]);
 
-      res.json(orders);
+    res.json(orders);
   } catch (error) {
-      res.status(500).json({message: error.message});
+    res.status(500).json({ message: error.message });
   }
-})
+});
 // Order List End //
 
 //                      Order Collection End                      //
@@ -280,7 +297,7 @@ app.post("/auth/login", async (req, res) => {
     if (users.length == 0) {
       res
         .status(500)
-        .json({ message: "User e-mail address or password is incorrect!" });
+        .json({ message: "User e-mail address or password is incorrect! 😡" });
     } else {
       const payload = {
         user: users[0],

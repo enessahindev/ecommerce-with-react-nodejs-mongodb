@@ -2,18 +2,18 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 function OrderComponents() {
-    const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState([]);
 
-    const getAll = async () => {
-      const user = JSON.parse(localStorage.getItem("user"));
-      const model = { userId: user._id };
-      const response = await axios.post("http://localhost:5000/orders", model);
-      setOrders(response.data);
-    };
+  const getAll = async () => {
+    let user = JSON.parse(localStorage.getItem("user"));
+    let model = { userId: user._id };
+    let response = await axios.post("http://localhost:5000/orders", model);
+    setOrders(response.data);
+  };
 
-    useEffect(() => {
-      getAll();
-    }, []);
+  useEffect(() => {
+    getAll();
+  }, []);
 
   return (
     <>
@@ -38,12 +38,12 @@ function OrderComponents() {
                 </tr>
               </thead>
               <tbody>
-                {orders.map((order, index) =>(
+                {orders.map((order, index) => (
                   <tr key={index}>
                     <td className="table-warning">{index + 1}</td>
-                    <td className="table-warning">{order.products.name}</td>
+                    <td className="table-warning">{order.products[0].name}</td>
                     <td className="table-warning">1</td>
-                    <td className="table-warning">{order.products.price}</td>
+                    <td className="table-warning">{order.products[0].price}</td>
                   </tr>
                 ))}
               </tbody>
